@@ -11,8 +11,10 @@ export default function SearchBusScreen() {
     const [results, setResults] = React.useState(null);
 
     const searchBus = async () => {
+
+        // Only works from browser, from phone you get CORS error
         try {
-            const response = await fetch(`http://127.0.0.1:8000/bus/${lineNumber}/logs?limit=${limit}`);
+            const response = await fetch(`http://192.168.1.43:8000/bus/${lineNumber}/logs?limit=${limit}`);
             const data = await response.json();
             setResults(data);
         } catch (error) {
