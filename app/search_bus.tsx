@@ -1,20 +1,17 @@
 // index.tsx
 import React from 'react';
-import { Button, Text, TextInput, View } from 'react-native';
+import { FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import styles from './styles';
 
 
 // Search Bus Screen Component
 export default function SearchBusScreen() {
     const [lineNumber, setLineNumber] = React.useState('');
-    const [limit, setLimit] = React.useState('');
     const [results, setResults] = React.useState(null);
 
     const searchBus = async () => {
-
-        // Only works from browser, from phone you get CORS error
         try {
-            const response = await fetch(`http://192.168.1.43:8000/bus/${lineNumber}/logs?limit=${limit}`);
+            const response = await fetch(`http://192.168.1.43:8000/bus/${lineNumber}/logs`);
             const data = await response.json();
             setResults(data);
         } catch (error) {
@@ -22,28 +19,60 @@ export default function SearchBusScreen() {
         }
     };
 
+    class BusLog {
+        line_number: string;
+        location_lat: number;
+        location_lon: number;
+        timestamp: string;
+
+        constructor(line_number: string, location_lat: number, location_lon: number, timestamp: string) {
+            this.line_number = line_number;
+            this.location_lat = location_lat;
+            this.location_lon = location_lon;
+            this.timestamp = timestamp;
+        }
+    }
+
+    const RenderItem = ({ item }: { item: BusLog }) => (
+        <View style={styles.row}>
+            <Text style={styles.latLonCell}>{item.location_lat}</Text>
+            <Text style={styles.latLonCell}>{item.location_lon}</Text>
+            <Text style={styles.timestampCell}>{new Date(item.timestamp).toLocaleString()}</Text>
+        </View>
+    );
+
+    const renderItem = (props: { item: BusLog }) => <RenderItem {...props} />;
+
     return (
         <View style={styles.container}>
-            <TextInput
-                style={styles.input}
-                placeholder="Enter Bus Line Number"
-                value={lineNumber}
-                onChangeText={setLineNumber}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Enter Limit (optional)"
-                value={limit}
-                onChangeText={setLimit}
-                keyboardType="numeric"
-            />
-            <Button title="Search" onPress={searchBus} />
+            <View style={styles.formContainer}>
+                <Text style={styles.title}>Search Bus Logs</Text>
+                <TextInput
+                    style={styles.input}
+                    placeholder="Enter Bus Line Number"
+                    value={lineNumber}
+                    onChangeText={setLineNumber}
+                    keyboardType="numeric"
+                />
+                <TouchableOpacity style={styles.button} onPress={searchBus}>
+                    <Text style={styles.buttonText}>Search</Text>
+                </TouchableOpacity>
+            </View>
             {results && (
                 <View style={styles.resultsContainer}>
                     <Text style={styles.resultsText}>Results:</Text>
-                    <Text>{JSON.stringify(results)}</Text>
+                    <View style={styles.headerRow}>
+                        <Text style={styles.latLonHeader}>Latitude</Text>
+                        <Text style={styles.latLonHeader}>Longitude</Text>
+                        <Text style={styles.timestampHeader}>Timestamp</Text>
+                    </View>
+                    <FlatList
+                        data={results}
+                        renderItem={renderItem}
+                        keyExtractor={(item) => item.timestamp}
+                    />
                 </View>
             )}
         </View>
     );
-};
+}
