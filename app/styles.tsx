@@ -7,16 +7,33 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     innerContainer: {
-        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        alignItems: 'center',
         padding: 20,
+        backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent background
         borderRadius: 10,
-        width: '80%',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        elevation: 5, // For Android shadow
     },
     welcomeText: {
-        fontSize: 24,
+        fontSize: 50,
         fontWeight: 'bold',
+        color: '#007FFF', // Darker Teal/Aqua color for the text
         textAlign: 'center',
-        color: '#333',
+        marginBottom: 20,
+        textShadowColor: '#5B3F8D', // Dark Purple shadow
+        textShadowOffset: { width: 2, height: 2 },
+        textShadowRadius: 5,
+    },
+    descriptionText: {
+        fontSize: 16,
+        color: '#666',
+        textAlign: 'center',
         marginBottom: 20,
     },
     formContainer: {
@@ -31,11 +48,11 @@ const styles = StyleSheet.create({
         marginVertical: 20,
     },
     title: {
-        fontSize: 24,
+        fontSize: 28,
         fontWeight: '600',
-        textAlign: 'center',
+        color: '#2C3E50', // Darker color for contrast
         marginBottom: 20,
-        color: '#333',
+        textAlign: 'center',
     },
     input: {
         height: 50,
@@ -61,11 +78,25 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 5,
         elevation: 3,
+        paddingHorizontal: 16,
     },
     buttonText: {
         color: '#fff',
         fontSize: 18,
         fontWeight: '500',
+    },
+    homeButton: {
+        position: 'absolute',
+        top: 10,
+        left: 10,
+        backgroundColor: '#ffffff',
+        borderRadius: 50,
+        padding: 10,
+        elevation: 5, // For shadow on Android
+        shadowColor: '#000', // For shadow on iOS
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 2,
     },
     resultsContainer: {
         marginTop: 16,
@@ -148,6 +179,17 @@ const styles = StyleSheet.create({
         fontSize: 14,
         paddingHorizontal: 8,
     },
+    map: {
+        width: '100%',
+        height: 400,  // You can adjust this based on your layout
+        borderRadius: 1,
+    },
+    card: {
+        width: '90%',
+        borderRadius: 15,
+        marginTop: 20,
+        elevation: 5,  // Adds shadow for Android
+    }
 });
 
 

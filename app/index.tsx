@@ -1,4 +1,3 @@
-// index.tsx
 import { LinearGradient } from 'expo-linear-gradient';
 import { Link } from 'expo-router';
 import { Text, View } from 'react-native';
@@ -21,18 +20,22 @@ const theme = {
 
 // Main App component
 export default function App() {
+
+
   return (
     <LinearGradient
       colors={['#6200ee', '#03dac4']}
       style={styles.container}
     >
       <View style={styles.innerContainer}>
-        <Text style={styles.welcomeText}>مرحبًا بك في تطبيقنا!</Text>
+        <Text style={styles.welcomeText}>عبّي الوسط!</Text>
+        <Text style={styles.descriptionText}>
+          Find your bus in real-time with ease.
+        </Text>
+        <Link href="/search_bus" asChild style={styles.button}>
+          <Text style={styles.buttonText}>Search Bus</Text>
+        </Link>
       </View>
-      <Link href="/search_bus" asChild><Text>Search Bus</Text></Link>
     </LinearGradient>
   );
 }
-
-
-
