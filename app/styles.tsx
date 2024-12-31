@@ -5,6 +5,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        padding: 16,  // Added padding for better spacing
     },
     innerContainer: {
         alignItems: 'center',
@@ -189,8 +190,26 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         marginTop: 20,
         elevation: 5,  // Adds shadow for Android
-    }
+    },
+    // NEW STYLES FOR BUTTONS
+    buttonContainer: {
+        marginVertical: 20,
+        width: '100%', // Take up full width for scrolling
+    },
+    busButton: {
+        backgroundColor: '#6200ee',
+        paddingVertical: 14,
+        paddingHorizontal: 20,
+        borderRadius: 30, // Rounded corners
+        marginBottom: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    busButtonText: {
+        color: '#fff',
+        fontSize: 18,
+        fontWeight: '600',
+    },
 });
-
 
 export default styles;

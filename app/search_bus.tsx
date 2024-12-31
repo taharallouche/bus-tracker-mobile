@@ -1,8 +1,7 @@
-// index.tsx
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
-import React from 'react';
-import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useEffect } from 'react';
+import { Keyboard, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { Card, DefaultTheme } from 'react-native-paper';
 import styles from './styles';
@@ -20,25 +19,34 @@ const theme = {
 
 // Search Bus Screen Component
 export default function SearchBusScreen() {
-    const [lineNumber, setLineNumber] = React.useState('');
-    interface BusLog {
-        location_lat: number;
-        location_lon: number;
-        line_number: string;
-        timestamp: string;
-    }
-
-    const [results, setResults] = React.useState<BusLog[] | null>(null);
+    const [lineNumber, setLineNumber] = React.useState('');  // Initially empty
+    const [busLines, setBusLines] = React.useState<string[]>([]); // State to store available bus lines
+    const [results, setResults] = React.useState<any | null>(null);
     const [mapRegion, setMapRegion] = React.useState({
-        latitude: 10.1,  // Default latitude, you can adjust this
-        longitude: 9.84,  // Default longitude, you can adjust this
+        latitude: 10.1,  // Default latitude
+        longitude: 9.84,  // Default longitude
         latitudeDelta: 0.0922,  // Controls the zoom level
         longitudeDelta: 0.0421,
     });
 
-    const searchBus = async () => {
+    // Fetch available bus lines on component mount
+    useEffect(() => {
+        const fetchBusLines = async () => {
+            try {
+                const response = await fetch('http://192.168.1.43:8000/buses');
+                const data = await response.json();
+                setBusLines(data.map((bus: { line_number: string }) => bus.line_number)); // Assuming the response contains line_number
+            } catch (error) {
+                console.error('Error fetching bus lines:', error);
+            }
+        };
+
+        fetchBusLines();
+    }, []);
+
+    const fetchBusResults = async (busLine: string) => {
         try {
-            const response = await fetch(`http://192.168.1.43:8000/bus/${lineNumber}/logs`);
+            const response = await fetch(`http://192.168.1.43:8000/bus/${busLine}/logs`);
             const data = await response.json();
             setResults(data);
 
@@ -50,6 +58,12 @@ export default function SearchBusScreen() {
                     longitudeDelta: 0.000421,
                 });
             }
+
+            if (data.length === 0) {
+                alert('No bus logs found for the given line number.');
+            }
+
+            Keyboard.dismiss();
         } catch (error) {
             console.error('Error fetching bus logs:', error);
         }
@@ -63,20 +77,24 @@ export default function SearchBusScreen() {
                 </TouchableOpacity>
             </Link>
 
-
             <Text style={styles.title}>Find Your Bus</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Enter Bus Line Number"
-                value={lineNumber}
-                onChangeText={setLineNumber}
-                keyboardType="numeric"
-            />
-            <TouchableOpacity style={styles.button} onPress={searchBus}>
-                <Text style={styles.buttonText}>Search</Text>
-            </TouchableOpacity>
 
-
+            {/* Render buttons for each bus line */}
+            <ScrollView style={styles.buttonContainer}>
+                {busLines.length > 0 ? (
+                    busLines.map((line, index) => (
+                        <TouchableOpacity
+                            key={index}
+                            style={styles.busButton}
+                            onPress={() => fetchBusResults(line)} // Fetch results when bus button is pressed
+                        >
+                            <Text style={styles.busButtonText}>Bus {line}</Text>
+                        </TouchableOpacity>
+                    ))
+                ) : (
+                    <Text>Loading bus lines...</Text>
+                )}
+            </ScrollView>
 
             {results && results.length > 0 && (
                 <Card style={styles.card}>
@@ -86,7 +104,7 @@ export default function SearchBusScreen() {
                         onRegionChangeComplete={(region) => setMapRegion(region)}
                         mapType="satellite"
                     >
-                        {results.map((log, index) => (
+                        {results.map((log: any, index: number) => (
                             <Marker
                                 key={index}
                                 coordinate={{
